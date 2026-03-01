@@ -1,0 +1,6 @@
+nexus_config.json
+.buildozer/
+bin/
+*.pyc
+__pycache__/
+*.log

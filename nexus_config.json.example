@@ -1,0 +1,5 @@
+{
+  "api_url": "https://your-server.com/nexus-log",
+  "telegram_bot_token": "YOUR_BOT_TOKEN",
+  "telegram_chat_id": "YOUR_CHAT_ID"
+}

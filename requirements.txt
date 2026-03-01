@@ -1,0 +1,5 @@
+kivy
+kivymd
+pillow
+scapy
+requests
