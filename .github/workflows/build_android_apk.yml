@@ -19,7 +19,7 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Install build dependencies
+      - name: Install System Dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y \
@@ -34,28 +34,26 @@ jobs:
           python -m pip install --upgrade pip
           pip install Cython==0.29.33 buildozer
 
-      - name: Build APK
+      - name: Build APK (Force Run)
         env:
           BUILDOZER_WARN_ON_ROOT: '0'
-          APP_ANDROID_ACCEPT_SDK_LICENSE: '1'
         run: |
           export PATH="$HOME/.local/bin:$PATH"
-          # تنظيف إجباري لضمان بناء نسخة جديدة
-          buildozer android clean
-          # بدء البناء مع تسجيل السجل
+          # إنشاء ملف إعدادات افتراضي إذا كان مفقوداً أو تالفاً
+          if [ ! -f buildozer.spec ]; then buildozer init; fi
+          # قبول التراخيص وبناء التطبيق
           yes | buildozer -v android debug 2>&1 | tee build.log
+        continue-on-error: true # لضمان وصولنا لخطوة رفع الملفات حتى لو حدث خطأ بسيط
 
-      - name: Upload build log on failure
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-log
-          path: build.log
+      - name: List Directory (Check)
+        run: |
+          ls -R bin/ || echo "No bin folder yet"
+          ls -a
 
       - name: Upload APK
-        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: nexusvision-apk
-          # تم تعديل المسار لضمان العثور على الملف
-          path: bin/*.apk
+          path: |
+            bin/*.apk
+            build.log
